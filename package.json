@@ -1,0 +1,13 @@
+{
+    "name": "data-visualization-dashboard",
+    "version": "1.0.0",
+    "scripts": {
+    "start": "node server/dist/index.js",
+    "build:client": "cd client && yarn install && yarn run build",
+    "build:server": "cd server && yarn install && yarn run build && yarn run start",
+    "build": "yarn run build:client && yarn run build:server"
+    },
+    "dependencies": {},
+    "devDependencies": {}
+  }
+  

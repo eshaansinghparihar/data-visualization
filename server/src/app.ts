@@ -1,14 +1,16 @@
 import { envs } from './core/config/env';
-import { Server } from './server';
+import { createServer } from './server';
 
-(() => {
- main();
-})();
+const main = async (): Promise<void> => {
+  const options = {
+    port: envs.PORT,
+    apiPrefix: envs.API_PREFIX,
+  };
 
-function main(): void {
- const server = new Server({
-  port: envs.PORT,
-  apiPrefix : envs.API_PREFIX
- });
- void server.start();
-}
+  const server = createServer(options);
+  await server.start();
+};
+
+main().catch((error) => {
+  console.error('Error starting the server:', error);
+});

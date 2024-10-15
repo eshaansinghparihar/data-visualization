@@ -1,51 +1,53 @@
-import express, { type Response, type Request } from 'express';
+import express, { type Request, type Response} from 'express';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
-
+import path from 'path';
 import { HttpCode, ONE_HUNDRED, ONE_THOUSAND, SIXTY } from './core/constants';
 
 interface ServerOptions {
- port: number;
- apiPrefix: string;
+  port: number;
+  apiPrefix: string;
 }
 
-export class Server {
- private readonly app : express.Application = express() as express.Application;
- private readonly port: number;
-
- constructor(options: ServerOptions) {
+export const createServer = (options: ServerOptions) => {
+  const app = express();
   const { port } = options;
-  this.port = port;
- }
 
- async start(): Promise<void> {
-  //* Middlewares
-  this.app.use(express.json());
-  this.app.use(express.urlencoded({ extended: true }));
-  this.app.use(compression());
-
-  this.app.use(
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+  app.use(compression());
+  app.use(
     rateLimit({
-     max: ONE_HUNDRED,
-     windowMs: SIXTY * SIXTY * ONE_THOUSAND,
-     message: 'Too many requests from this IP, please try again in one hour'
+      max: ONE_HUNDRED,
+      windowMs: SIXTY * SIXTY * ONE_THOUSAND,
+      message: 'Too many requests from this IP, please try again in one hour',
     })
-   );
+  );
 
-  this.app.get('/', (_req: Request, res: Response) => {
-    try{
-        return res.status(HttpCode.OK).send({
-            message: `Welcome to Initial API! \n Endpoints available at http://localhost:${this.port}/`
-           });
+  app.get('/api', (_req: Request, res: any) => {
+    try {
+      return res.status(HttpCode.OK).send({
+        message: `Welcome to Initial API! \n Endpoints available at http://localhost:${port}/`,
+      });
+    } catch (error) {
+      return res.status(HttpCode.INTERNAL_SERVER_ERROR).send({ error, message: 'Internal Server Error' });
     }
-    catch(error)
-    {
-        return res.status(HttpCode.INTERNAL_SERVER_ERROR).send({ error: error , message : 'Internal Server Error' });
-    }
-   });
-
-  this.app.listen(this.port, () => {
-   console.log(`Server running on port ${this.port}...`);
   });
- }
-}
+
+  app.use(express.static(path.join(__dirname, '../../client/build')));
+
+  app.get('*', (_req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, '../../client/build', 'index.html'));
+  });
+
+  return {
+    start: () => {
+      return new Promise<void>((resolve, reject) => {
+        app.listen(port, () => {
+          console.log(`Server running on port ${port}...`);
+          resolve();
+        }).on('error', reject);
+      });
+    }
+  };
+};

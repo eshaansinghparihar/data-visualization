@@ -3,7 +3,7 @@
   "include": ["src/**/*"],
   "compilerOptions": {
     "types": ["node", "express"],
-    "target": "ESNext",
+    "target": "es6",
     "module": "CommonJS",
     "rootDir": "./src",
     "moduleResolution": "Node",
@@ -14,6 +14,6 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "strictNullChecks": true,
-    "skipLibCheck": true
+    // "skipLibCheck": true
   }
 }
