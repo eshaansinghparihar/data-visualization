@@ -4,20 +4,23 @@ import rateLimit from 'express-rate-limit';
 import path from 'path';
 import connectDB from './config/database';
 import errorMiddleware from './middleware/errorMiddleware';
+import bodyParser from 'body-parser';
+import routes from './routes/index';
 import { HttpCode, ONE_HUNDRED, ONE_THOUSAND, SIXTY } from './core/constants';
 
 
 interface ServerOptions {
   port: number;
   apiPrefix: string;
-  mongoDbUri : string;
+//   mongoDbUri : string;
 }
 
 export const createServer = (options: ServerOptions) => {
   const app = express();
-  const { port } = options;
+  const { port, apiPrefix } = options;
 
   app.use(express.json());
+  app.use(bodyParser.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(compression());
   app.use(
@@ -38,6 +41,8 @@ export const createServer = (options: ServerOptions) => {
     }
   });
 
+  app.use(apiPrefix, routes);
+
   app.use(express.static(path.join(__dirname, '../../client/build')));
 
   app.get('*', (_req: Request, res: Response) => {
@@ -49,7 +54,7 @@ export const createServer = (options: ServerOptions) => {
   return {
     start: () => {
       return new Promise<void>(async (resolve, reject) => {
-        await connectDB();
+        // await connectDB(mongoDbUri);
         app.listen(port, () => {
           console.log(`Server running on port ${port}...`);
           resolve();
