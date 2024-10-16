@@ -5,6 +5,7 @@ const main = async (): Promise<void> => {
   const options = {
     port: envs.PORT,
     apiPrefix: envs.API_PREFIX,
+    mongoDbUri : envs.MONGODB_URI
   };
 
   const server = createServer(options);
