@@ -2,11 +2,15 @@ import express, { type Request, type Response} from 'express';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import path from 'path';
+import connectDB from './config/database';
+import errorMiddleware from './middleware/errorMiddleware';
 import { HttpCode, ONE_HUNDRED, ONE_THOUSAND, SIXTY } from './core/constants';
+
 
 interface ServerOptions {
   port: number;
   apiPrefix: string;
+  mongoDbUri : string;
 }
 
 export const createServer = (options: ServerOptions) => {
@@ -40,9 +44,12 @@ export const createServer = (options: ServerOptions) => {
     res.sendFile(path.join(__dirname, '../../client/build', 'index.html'));
   });
 
+  app.use(errorMiddleware);
+
   return {
     start: () => {
-      return new Promise<void>((resolve, reject) => {
+      return new Promise<void>(async (resolve, reject) => {
+        await connectDB();
         app.listen(port, () => {
           console.log(`Server running on port ${port}...`);
           resolve();
