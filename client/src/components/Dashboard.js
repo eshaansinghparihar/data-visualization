@@ -15,7 +15,7 @@ const Dashboard = () => {
     const [selectedFeature, setSelectedFeature] = useState(null);
     const [age, setAge] = useState('');
     const [gender, setGender] = useState('');
-    const [dateRange, setDateRange] = useState({ start: '04/10/2022', end: '07/10/2022' });
+    const [dateRange, setDateRange] = useState({ start: '04/10/2022', end: '29/10/2022' });
 
     const features = ['A', 'B', 'C', 'D', 'E', 'F'];
 

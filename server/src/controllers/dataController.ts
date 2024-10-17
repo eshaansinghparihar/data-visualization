@@ -40,7 +40,7 @@ export class DataController {
         }
         
         const filters : Filters = { age, gender, startDate, endDate };
-        const data = await this.dataService.fetchData(filters); // Provide auth here
+        const data = await this.dataService.fetchData(filters);
         return data;
     }
 }
