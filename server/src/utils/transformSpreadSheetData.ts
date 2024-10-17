@@ -1,9 +1,6 @@
 export default function transformSpreadSheetData(data: string[][]): Record<string, string>[]{
     let transformedData : Record<string, string>[] = [];
 
-    // TO DO : Add logic to convert the dates to Date MM/DD/YYYY from String format.
-
-
     const keys = data[0];
     data.forEach((elem, index)=>{
         if(index!==0)
