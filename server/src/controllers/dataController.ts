@@ -4,6 +4,7 @@ import { Age } from '../types/age';
 import { Gender } from '../types/gender';
 import isValidDate from '../utils/isValidDate';
 import { Filters } from '../types/filters';
+import { BadRequestError } from '../middleware/errorHandler';
 
 export class DataController {
     private dataService: DataService;
@@ -23,15 +24,19 @@ export class DataController {
         }
 
         if (gender && !Object.values(Gender).includes(gender as Gender)) {
-            throw new Error("Invalid gender value. Must be 'Male' or 'Female'.");
+            throw new BadRequestError("Invalid gender value. Must be 'Male' or 'Female'.");
         }
 
+        if ((startDate && !endDate) || (endDate && !startDate)) {
+            throw new BadRequestError("Both 'startDate' and 'endDate' must be provided together. Please ensure that if one is specified, the other is also specified. Example format: 'DD/MM/YYYY'.");
+        }        
+
         if (startDate && !isValidDate(startDate)) {
-            throw new Error("Invalid startDate format. Use DD/MM/YYYY.");
+            throw new BadRequestError("Invalid startDate format. Use DD/MM/YYYY.");
         }
 
         if (endDate && !isValidDate(endDate)) {
-            throw new Error("Invalid endDate format. Use DD/MM/YYYY.");
+            throw new BadRequestError("Invalid endDate format. Use DD/MM/YYYY.");
         }
         
         const filters : Filters = { age, gender, startDate, endDate };

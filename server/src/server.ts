@@ -1,4 +1,4 @@
-import express, { type Request, type Response} from 'express';
+import express, { NextFunction, type Request, type Response} from 'express';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import path from 'path';
@@ -7,6 +7,7 @@ import errorMiddleware from './middleware/errorMiddleware';
 import bodyParser from 'body-parser';
 import routes from './routes/index';
 import { HttpCode, ONE_HUNDRED, ONE_THOUSAND, SIXTY } from './core/constants';
+import { BadRequestError } from './middleware/errorHandler';
 
 
 interface ServerOptions {
@@ -42,6 +43,12 @@ export const createServer = (options: ServerOptions) => {
   });
 
   app.use(apiPrefix, routes);
+
+  app.get('/test', (req: Request, res: Response, next: NextFunction) => {
+    // Simulate an error
+    next(new BadRequestError("This is a test error"));
+});
+
 
   app.use(express.static(path.join(__dirname, '../../client/build')));
 
