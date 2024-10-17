@@ -2,6 +2,7 @@ import express, { NextFunction, type Request, type Response} from 'express';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import path from 'path';
+import cors from 'cors';
 import connectDB from './config/database';
 import errorMiddleware from './middleware/errorMiddleware';
 import bodyParser from 'body-parser';
@@ -21,6 +22,13 @@ export const createServer = (options: ServerOptions) => {
   const { port, apiPrefix } = options;
 
   app.use(express.json());
+  const corsOptions = {
+    origin: 'http://localhost:3000',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+    optionsSuccessStatus: 200,
+};
+  app.use(cors());
   app.use(bodyParser.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(compression());
@@ -43,12 +51,6 @@ export const createServer = (options: ServerOptions) => {
   });
 
   app.use(apiPrefix, routes);
-
-  app.get('/test', (req: Request, res: Response, next: NextFunction) => {
-    // Simulate an error
-    next(new BadRequestError("This is a test error"));
-});
-
 
   app.use(express.static(path.join(__dirname, '../../client/build')));
 
