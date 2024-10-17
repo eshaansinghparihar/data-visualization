@@ -1,5 +1,9 @@
 import { DataService } from '../services/dataService';
 import { queryParam } from '../decorators/queryParam';
+import { Age } from '../types/age';
+import { Gender } from '../types/gender';
+import isValidDate from '../utils/isValidDate';
+import { Filters } from '../types/filters';
 
 export class DataController {
     private dataService: DataService;
@@ -9,14 +13,28 @@ export class DataController {
     }
 
     async getData(
-        @queryParam('age') age?: string,
-        @queryParam('gender') gender?: string,
+        @queryParam('age') age?: Age,
+        @queryParam('gender') gender?: Gender,
         @queryParam('startDate') startDate?: string,
         @queryParam('endDate') endDate?: string
     ) {
-        // Logic to build filters based on query params
-        const filters = { age, gender, startDate, endDate };
-        // Call the data service
+        if (age && !Object.values(Age).includes(age as Age)) {
+            throw new Error("Invalid age value. Must be '15-25' or '>25'.");
+        }
+
+        if (gender && !Object.values(Gender).includes(gender as Gender)) {
+            throw new Error("Invalid gender value. Must be 'Male' or 'Female'.");
+        }
+
+        if (startDate && !isValidDate(startDate)) {
+            throw new Error("Invalid startDate format. Use DD/MM/YYYY.");
+        }
+
+        if (endDate && !isValidDate(endDate)) {
+            throw new Error("Invalid endDate format. Use DD/MM/YYYY.");
+        }
+        
+        const filters : Filters = { age, gender, startDate, endDate };
         const data = await this.dataService.fetchData(filters); // Provide auth here
         return data;
     }
