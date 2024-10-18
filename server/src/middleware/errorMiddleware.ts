@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import { BadRequestError, InternalServerError } from './errorHandler';
+import { BadRequestError, InternalServerError, TooManyRequestsError } from './errorHandler';
 
-const errorMiddleware = (err: any, _req: Request, res: Response, _next: NextFunction) => {
+const errorMiddleware = (err: Error, _req: Request, res: Response, _next: NextFunction) => {
     console.error(err.stack);
-    if (err instanceof BadRequestError || err instanceof InternalServerError) {
+    if (err instanceof BadRequestError || err instanceof InternalServerError || err instanceof TooManyRequestsError) {
         res.status(err.status).json({ error: err.message });
     }
     else {

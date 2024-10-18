@@ -17,3 +17,12 @@ export class InternalServerError extends Error {
         this.status = HttpCode.INTERNAL_SERVER_ERROR;
     }
 }
+
+export class TooManyRequestsError extends Error {
+    status: HttpCode;
+    constructor(message:string) {
+        super(message);
+        this.name = 'TooManyRequestsError';
+        this.status = HttpCode.TOO_MANY_REQUESTS;
+    }
+}

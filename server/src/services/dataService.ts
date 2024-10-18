@@ -12,7 +12,7 @@ export class DataService {
         try{
             const request = {
                 spreadsheetId: getSpreadSheet(),
-                range: 'Sheet3!A:I',
+                range: 'Sheet3!A:Z',
                 auth : getAuth(),
             };
     
