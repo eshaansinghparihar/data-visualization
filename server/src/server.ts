@@ -8,6 +8,7 @@ import bodyParser from 'body-parser';
 import routes from './routes/index';
 import { ONE_HUNDRED, ONE_THOUSAND, SIXTY } from './core/constants';
 import { TooManyRequestsError } from './middleware/errorHandler';
+import { envs } from './core/config/env';
 
 interface ServerOptions {
   port: number;
@@ -20,8 +21,11 @@ export const createServer = (options: ServerOptions) => {
   const { port, apiPrefix } = options;
 
   app.use(express.json());
+
+  const origin = (envs.NODE_ENV==='development') ? envs.HOSTNAME+':'+envs.CLIENT_PORT : envs.HOSTNAME;
+
   const corsOptions = {
-    origin: 'http://localhost:3000',
+    origin: origin,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
     optionsSuccessStatus: 200,
