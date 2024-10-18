@@ -1,14 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 import BarGraph from './charts/BarGraph';
 import LineChart from './charts/LineChart';
 import { extractFeatures } from './utils/extractFeatures';
+import { useAppContext } from './context/AppContext';
 
 const SharedView = () => {
-    const [selectedFeature, setSelectedFeature] = useState('');
-    const [data, setData] = useState([]);
-    const [features, setFeatures] = useState([]);
+    const {
+        setData,
+        selectedFeature,
+        setSelectedFeature,
+        features, setFeatures,
+        data
+    } = useAppContext();
 
     const location = useLocation();
 
@@ -24,40 +29,36 @@ const SharedView = () => {
     };
 
     const fetchData = async (age, gender, startDate, endDate) => {
-        const hostname = (process.env["NODE_ENV"]==='development') ? 'http://localhost:8000' : `${window.location.protocol}//${window.location.hostname}`
+        const hostname = (process.env["NODE_ENV"] === 'development') ? 'http://localhost:8000' : `${window.location.protocol}//${window.location.hostname}`;
         try {
-        const response = await axios.get(`${hostname}/api/v1/getData`, {
-            params: { age, gender, startDate, endDate },
-        });
-        return response.data;
-        }
-        catch(error)
-        {
+            const response = await axios.get(`${hostname}/api/v1/getData`, {
+                params: { age, gender, startDate, endDate },
+            });
+            return response.data;
+        } catch (error) {
             throw error.response.data;
         }
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         const { age, gender, startDate, endDate, selectedFeature } = getQueryParams();
-        if(selectedFeature) setSelectedFeature(selectedFeature)
+        if (selectedFeature) setSelectedFeature(selectedFeature);
         const fetchDataFromApi = async () => {
             const response = await fetchData(age, gender, startDate, endDate);
             setData(response);
-            setFeatures(extractFeatures(response))
-        }
-        fetchDataFromApi()
-    },[])
+            setFeatures(extractFeatures(response));
+        };
+        fetchDataFromApi();
+    }, []);
 
     return (
-        <div>
-            <div className="dashboard-container">
+        <div className="dashboard-container">
             <div className="graph-container">
-                <div className="bar-graph">
-                <BarGraph data={data} features={features}/>
-                </div>
-                <div className="line-graph">
-                {selectedFeature && <LineChart data={data} feature={selectedFeature} />}
-                </div>
+            <div className="bar-graph">
+            <BarGraph data={data} features={features} />
+            </div>
+            <div className="line-graph">
+            {selectedFeature ? <LineChart data={data} feature={selectedFeature} /> : <></>}
             </div>
             </div>
         </div>
