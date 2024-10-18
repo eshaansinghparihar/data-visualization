@@ -14,7 +14,6 @@ import {
 ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, PointElement);
 
 const LineChart = ({ data, feature }) => {
-    console.log('Feature:',feature);
     const aggregatedData = data.reduce((acc, entry) => {
         const day = entry.Day;
         const value = parseInt(entry[feature], 0);
