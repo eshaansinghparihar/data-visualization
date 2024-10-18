@@ -10,8 +10,9 @@ import {
     Legend,
     PointElement
 } from 'chart.js';
+import zoomPlugin from 'chartjs-plugin-zoom';
 
-ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, PointElement);
+ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend, PointElement, zoomPlugin);
 
 const LineChart = ({ data, feature }) => {
     const aggregatedData = data.reduce((acc, entry) => {
@@ -48,7 +49,7 @@ const LineChart = ({ data, feature }) => {
                 data: shiftedData,
                 borderColor: 'rgba(75, 192, 192, 1)',
                 backgroundColor: 'lightblue',
-                spanGaps: false
+                spanGaps: false,
             },
         ],
     };
@@ -58,6 +59,22 @@ const LineChart = ({ data, feature }) => {
         plugins: {
             legend: {
                 display: false,
+            },
+            zoom: {
+                pan: {
+                    enabled: true,
+                    mode: 'x',
+                },
+                zoom: {
+                    enabled: true,
+                    mode: 'x',
+                    wheel: {
+                        enabled: true,
+                      },
+                    pinch: {
+                        enabled: true
+                      },
+                },
             },
         },
         scales: {
@@ -78,6 +95,42 @@ const LineChart = ({ data, feature }) => {
             },
         },
     };
+
+    // const options = {
+    //     responsive: true,
+    //     plugins: {
+    //         legend: {
+    //             display: false,
+    //         },
+    //         zoom: {
+    //             pan: {
+    //                 enabled: true,
+    //                 mode: 'x',
+    //             },
+    //             zoom: {
+    //                 enabled: true,
+    //                 mode: 'x',
+    //             },
+    //         },
+    //     },
+    //     scales: {
+    //         x: {
+    //             title: {
+    //                 display: true,
+    //                 text: 'Days',
+    //             },
+    //             ticks: {
+    //                 autoSkip: false,
+    //             },
+    //         },
+    //         y: {
+    //             title: {
+    //                 display: true,
+    //                 text: 'Values',
+    //             },
+    //         },
+    //     },
+    // };
 
     return <Line data={lineData} options={options} />;
 };

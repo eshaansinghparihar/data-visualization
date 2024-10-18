@@ -56,6 +56,7 @@ const BarGraph = ({ data, features, setSelectedFeature }) => {
         onClick: (evt, activeElements) => {
             if (activeElements.length > 0) {
                 const featureIndex = activeElements[0].index;
+                if(setSelectedFeature)
                 setSelectedFeature(features[featureIndex]);
             }
         },
