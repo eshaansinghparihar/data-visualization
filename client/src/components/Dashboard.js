@@ -7,8 +7,9 @@ import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css'
 
 const fetchData = async (age, gender, startDate, endDate) => {
+    const hostname = (process.env["NODE_ENV"]==='development') ? 'http://localhost:8000' : process.env["HOSTNAME"]
     try {
-    const response = await axios.get('http://localhost:8000/api/v1/getData', {
+    const response = await axios.get(`${hostname}/api/v1/getData`, {
         params: { age, gender, startDate, endDate },
     });
     return response.data;
@@ -90,6 +91,15 @@ const Dashboard = () => {
         setDateRange(selection)
     }
 
+    const handleShareView = () => {
+        const shareUrl = '';
+        // if(age) shareUrl
+    }
+
+    const handleSavePreference = () => {
+
+    }
+
     if (error) {
         return (
             <div className="error-container">
@@ -102,6 +112,8 @@ const Dashboard = () => {
     return (
         <div>
            <div className="dashboard-container">
+           <button onClick={handleShareView}>Share View</button>
+           <button onClick={handleShareView}>Save Preference</button>
             <div className="graph-container">
                 <div className="bar-graph">
                 <h5>Bar Graph: {isLoading && <span>Loading</span>}</h5>
@@ -137,7 +149,6 @@ const Dashboard = () => {
                         ))}
                     </select>
             </label>
-
            </div>
         </div>
         </div>
