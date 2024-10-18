@@ -5,6 +5,7 @@ import axios from 'axios';
 import { DateRangePicker } from 'react-date-range';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css'
+import { extractFeatures } from './utils/extractFeatures';
 
 const fetchData = async (age, gender, startDate, endDate) => {
     const hostname = (process.env["NODE_ENV"]==='development') ? 'http://localhost:8000' : `${window.location.protocol}//${window.location.hostname}`
@@ -54,7 +55,8 @@ const Dashboard = () => {
             setData(result);
             setError(null);
             extractUniqueValues(result);
-            extractFeatures(result);
+            const extractedFeatures = extractFeatures(result)
+            setFeatures(extractedFeatures);
             }
             catch(error)
             {
@@ -80,12 +82,6 @@ const Dashboard = () => {
         setUniqueAges(Array.from(ages));
         setUniqueGenders(Array.from(genders));
     };
-
-    const extractFeatures = (data) => {
-        const keys = Object.keys(data[0])
-        const features = keys.filter((_element, index) => index > 2);
-        setFeatures(features)
-    }
 
     const handleChange = ({selection}) =>{
         setDateRange(selection)
@@ -129,11 +125,9 @@ const Dashboard = () => {
            <button onClick={handleShareView}>Save Preference</button>
             <div className="graph-container">
                 <div className="bar-graph">
-                <h5>Bar Graph: {isLoading && <span>Loading</span>}</h5>
                 <BarGraph data={data} features={features} setSelectedFeature={setSelectedFeature}/>
                 </div>
                 <div className="line-graph">
-                {selectedFeature && <h5>Line Graph for feature {selectedFeature} :  {isLoading && <span>Loading</span>}</h5>}
                 {selectedFeature && <LineChart data={data} feature={selectedFeature} />}
                 </div>
             </div>
