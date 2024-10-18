@@ -91,9 +91,22 @@ const Dashboard = () => {
         setDateRange(selection)
     }
 
+    const generateShareableURL = (age, gender, startDate, endDate, selectedFeature, showLine) => {
+        const baseURL = window.location.origin;
+        const params = new URLSearchParams({
+            age: age || '',
+            gender: gender || '',
+            startDate: startDate || '',
+            endDate: endDate || '',
+            selectedFeature: selectedFeature || '',
+        }).toString();
+    
+        return `${baseURL}/shared/view?${params}`;
+    };
+
     const handleShareView = () => {
-        const shareUrl = '';
-        // if(age) shareUrl
+        const shareLink = generateShareableURL(age, gender, convertDate(dateRange.startDate), convertDate(dateRange.endDate), selectedFeature);
+        navigator.clipboard.writeText(shareLink);        
     }
 
     const handleSavePreference = () => {
