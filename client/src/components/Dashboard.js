@@ -7,7 +7,7 @@ import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css'
 
 const fetchData = async (age, gender, startDate, endDate) => {
-    const hostname = (process.env["NODE_ENV"]==='development') ? 'http://localhost:8000' : window.location.hostname
+    const hostname = (process.env["NODE_ENV"]==='development') ? 'http://localhost:8000' : `${window.location.protocol}//${window.location.hostname}`
     try {
     const response = await axios.get(`${hostname}/api/v1/getData`, {
         params: { age, gender, startDate, endDate },
