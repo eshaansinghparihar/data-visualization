@@ -7,6 +7,7 @@ import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import { extractFeatures } from './utils/extractFeatures';
 import { useAppContext } from './context/AppContext';
+import { getCookie, savePreferences, eraseCookies } from './utils/handleCookies';
 
 const fetchData = async (age, gender, startDate, endDate) => {
     const hostname = (process.env["NODE_ENV"] === 'development') ? 'http://localhost:8000' : `${window.location.protocol}//${window.location.hostname}`;
@@ -31,13 +32,42 @@ const Dashboard = () => {
         gender, setGender,
         dateRange, setDateRange,
         error, setError,
-        isLoading, setLoading
+        isLoading, setLoading,
+        preferences, setPreferences
     } = useAppContext();
 
     const convertDate = (str) => {
         const date = new Date(str);
         return [("0" + date.getDate()).slice(-2), ("0" + (date.getMonth() + 1)).slice(-2), date.getFullYear()].join("/");
     };
+
+    useEffect(() => {
+        setTimeout(()=>{
+            const filters = JSON.parse(getCookie('userFilters'));
+            const dateRangeFromCookie = JSON.parse(getCookie('userDateRange'));
+        
+            if (filters) {
+                setAge(filters.age);
+                setGender(filters.gender);
+            }
+            
+            if (dateRangeFromCookie) {
+                const { startDate, endDate } = dateRangeFromCookie;
+                if (new Date(startDate) instanceof Date && !isNaN(new Date(startDate)) &&
+                    new Date(endDate) instanceof Date && !isNaN(new Date(endDate))) {
+                    setDateRange({
+                        startDate: new Date(startDate),
+                        endDate: new Date(endDate),
+                        key: 'selection'
+                    });
+                } else {
+                    console.error('Invalid date range from cookie:', dateRangeFromCookie);
+                }
+            }
+        },800)
+    }, []);
+    
+
 
     useEffect(() => {
         const startDate = convertDate(dateRange.startDate);
@@ -94,6 +124,11 @@ const Dashboard = () => {
         navigator.clipboard.writeText(shareLink);
     };
 
+    const handleLogout = () => {
+        const filters = { age, gender };
+        savePreferences(filters, dateRange);
+    }
+
     if (error) {
         return (
             <div className="error-container">
@@ -103,10 +138,13 @@ const Dashboard = () => {
         );
     }
 
+    console.log(data)
+
     return (
         <div className="dashboard-container">
             <button onClick={handleShareView}>Share View</button>
-            <button onClick={handleShareView}>Save Preference</button>
+            <button onClick={handleLogout}>Logout</button>
+            <button onClick={eraseCookies}>Clear Preferences</button>
             <div className="graph-container">
             <div className="bar-graph">
                 <BarGraph data={data} features={features} setSelectedFeature={setSelectedFeature} />

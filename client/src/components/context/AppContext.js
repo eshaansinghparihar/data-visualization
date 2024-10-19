@@ -27,7 +27,7 @@ export const AppProvider = ({ children }) => {
             uniqueGenders, setUniqueGenders,
             error, setError,
             isLoading, setLoading,
-            selectedFeature, setSelectedFeature,
+            selectedFeature, setSelectedFeature
         }}>
             {children}
         </AppContext.Provider>
