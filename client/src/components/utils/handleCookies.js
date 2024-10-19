@@ -25,7 +25,7 @@ function eraseCookie(name) {
 
 function eraseCookies(){
     eraseCookie('userFilters');
-    eraseCookie('userDateRange')
+    eraseCookie('userDateRange');
 }
 
 function savePreferences(filters, dateRange) {
