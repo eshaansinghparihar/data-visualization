@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import axios from 'axios';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import BarGraph from './charts/BarGraph';
 import LineChart from './charts/LineChart';
 import { extractFeatures } from './utils/extractFeatures';
 import { useAppContext } from './context/AppContext';
+import { logout } from '../auth/authService';
 
 const SharedView = () => {
     const {
@@ -14,6 +15,8 @@ const SharedView = () => {
         features, setFeatures,
         data
     } = useAppContext();
+
+    const navigator = useNavigate()
 
     const location = useLocation();
 
@@ -51,8 +54,18 @@ const SharedView = () => {
         fetchDataFromApi();
     }, []);
 
+    const handleLogout = async () => {
+        await logout();
+    }
+
+    const navigate = () => {
+        navigator('/dashboard', {replace : true});
+    }
+
     return (
         <div className="dashboard-container">
+            <button onClick={handleLogout}>Logout</button>
+            <button onClick={navigate}>Go To Dashboard</button>
             <div className="graph-container">
             <div className="bar-graph">
             <BarGraph data={data} features={features} />

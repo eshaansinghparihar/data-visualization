@@ -8,6 +8,7 @@ import 'react-date-range/dist/theme/default.css';
 import { extractFeatures } from './utils/extractFeatures';
 import { useAppContext } from './context/AppContext';
 import { getCookie, savePreferences, eraseCookies } from './utils/handleCookies';
+import { logout } from '../auth/authService';
 
 const fetchData = async (age, gender, startDate, endDate) => {
     const hostname = (process.env["NODE_ENV"] === 'development') ? 'http://localhost:8000' : `${window.location.protocol}//${window.location.hostname}`;
@@ -32,8 +33,7 @@ const Dashboard = () => {
         gender, setGender,
         dateRange, setDateRange,
         error, setError,
-        isLoading, setLoading,
-        preferences, setPreferences
+        setLoading, user
     } = useAppContext();
 
     const convertDate = (str) => {
@@ -45,7 +45,6 @@ const Dashboard = () => {
         setTimeout(()=>{
             const filters = JSON.parse(getCookie('userFilters'));
             const dateRangeFromCookie = JSON.parse(getCookie('userDateRange'));
-        
             if (filters) {
                 setAge(filters.age);
                 setGender(filters.gender);
@@ -124,9 +123,18 @@ const Dashboard = () => {
         navigator.clipboard.writeText(shareLink);
     };
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
         const filters = { age, gender };
         savePreferences(filters, dateRange);
+        console.log(user);
+        await logout();
+    }
+
+    const clearPreferences = () => {
+        eraseCookies();
+        setAge('');
+        setGender('');
+        setDateRange({ startDate: new Date(), endDate: new Date(), key: 'selection' });
     }
 
     if (error) {
@@ -138,13 +146,11 @@ const Dashboard = () => {
         );
     }
 
-    console.log(data)
-
     return (
         <div className="dashboard-container">
             <button onClick={handleShareView}>Share View</button>
             <button onClick={handleLogout}>Logout</button>
-            <button onClick={eraseCookies}>Clear Preferences</button>
+            <button onClick={clearPreferences}>Clear Preferences</button>
             <div className="graph-container">
             <div className="bar-graph">
                 <BarGraph data={data} features={features} setSelectedFeature={setSelectedFeature} />

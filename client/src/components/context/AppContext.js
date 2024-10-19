@@ -5,6 +5,7 @@ const AppContext = createContext();
 export const useAppContext = () => useContext(AppContext);
 
 export const AppProvider = ({ children }) => {
+    const [user, setUser] = useState(null);
     const [age, setAge] = useState('');
     const [gender, setGender] = useState('');
     const [dateRange, setDateRange] = useState({ startDate: new Date(), endDate: new Date(), key: 'selection' });
@@ -27,7 +28,8 @@ export const AppProvider = ({ children }) => {
             uniqueGenders, setUniqueGenders,
             error, setError,
             isLoading, setLoading,
-            selectedFeature, setSelectedFeature
+            selectedFeature, setSelectedFeature,
+            user, setUser,
         }}>
             {children}
         </AppContext.Provider>
