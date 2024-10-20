@@ -3,7 +3,7 @@ import { createServer } from './server';
 
 const main = async (): Promise<void> => {
   const options = {
-    port: envs.PORT,
+    port: envs.SERVER_PORT,
     apiPrefix: envs.API_PREFIX,
     mongoDbUri : envs.MONGODB_URI
   };
