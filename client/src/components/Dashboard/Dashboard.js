@@ -143,7 +143,8 @@ const Dashboard = ({user}) => {
         eraseCookies();
         setAge('');
         setGender('');
-        setDateRange({ startDate: new Date(), endDate: new Date(), key: 'selection' });
+        setDateRange({ startDate: new Date('10/01/2022'), 
+            endDate: new Date('10/31/2022'), key: 'selection' });
         toast("Saved preferences have been cleared!");
     }
 

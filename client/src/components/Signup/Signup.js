@@ -1,8 +1,11 @@
+// src/Signup.js
 import React, { useState } from 'react';
-import { login } from '../auth/authService';
+import { signUp } from '../../auth/authService';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import Card from '../Card/Card';
+import './Signup.css';
 
-const Login = () => {
+const Signup = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -12,10 +15,12 @@ const Login = () => {
   const from = location.state?.from || '/dashboard';
   const search = location.state?.search || '';
 
-  const handleLogin = async (e) => {
+  console.log(from, " ", search)
+
+  const handleSignUp = async (e) => {
     e.preventDefault();
     try {
-      await login(email, password);
+      await signUp(email, password);
       navigate(`${from}${search}`, { replace: true });
     } catch (error) {
       setError(error.message);
@@ -23,14 +28,16 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleLogin}>
+    <div className="login-container">
+       <Card title={"Sign Up"}>
+       <form onSubmit={handleSignUp} className='signup-form'>
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          className="signup-input"
         />
         <input
           type="password"
@@ -38,16 +45,17 @@ const Login = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          className="signup-input"
         />
-        <button type="submit">Login</button>
+        <button type="submit" className="signup-button">Sign Up</button>
         {(from !== '/dashboard' && search) ?
-        <Link to="/signup" state={{ from, search }}>Don't have an account yet ? Signup </Link> : 
-        <Link to="/signup" >Don't have an account yet ? Signup </Link>}
-        
-        {error && <p>{error}</p>}
+        <Link to="/login" state={{ from, search }} className="login-link">Already have an account ? Login </Link> : 
+        <Link to="/login" className="login-link">Already have an account ? Login </Link>}
+        {error && <p className="error-message">{error}</p>}
       </form>
+       </Card>
     </div>
   );
 };
 
-export default Login;
+export default Signup;

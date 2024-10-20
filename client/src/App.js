@@ -6,8 +6,8 @@ import Dashboard from './components/Dashboard/Dashboard';
 import { Routes, Route, Navigate, BrowserRouter } from 'react-router-dom';
 import SharedView from './components/SharedView';
 import NotFound from './components/NotFound';
-import Signup from './components/Signup';
-import Login from './components/Login';
+import Signup from './components/Signup/Signup';
+import Login from './components/Login/Login';
 import { AppProvider } from './components/context/AppContext';
 
 function App() {
