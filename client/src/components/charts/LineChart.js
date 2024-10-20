@@ -47,8 +47,8 @@ const LineChart = ({ data, feature }) => {
             {
                 label: feature,
                 data: shiftedData,
-                borderColor: 'rgba(75, 192, 192, 1)',
-                backgroundColor: 'lightblue',
+                borderColor: 'rgba(75, 192, 192, 0.5)',
+                pointBackgroundColor: 'black',
                 spanGaps: false,
             },
         ],

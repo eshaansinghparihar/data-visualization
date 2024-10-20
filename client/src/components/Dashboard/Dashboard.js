@@ -1,14 +1,20 @@
 import { useEffect } from 'react';
-import BarGraph from "./charts/BarGraph";
-import LineChart from './charts/LineChart';
+import BarGraph from "../charts/BarGraph";
+import LineChart from '../charts/LineChart';
 import axios from 'axios';
 import { DateRangePicker } from 'react-date-range';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
-import { extractFeatures } from './utils/extractFeatures';
-import { useAppContext } from './context/AppContext';
-import { getCookie, savePreferences, eraseCookies } from './utils/handleCookies';
-import { logout } from '../auth/authService';
+import { extractFeatures } from '../utils/extractFeatures';
+import { useAppContext } from '../context/AppContext';
+import { getCookie, savePreferences, eraseCookies } from '../utils/handleCookies';
+import { logout } from '../../auth/authService';
+import Navbar from '../Navbar/Navbar';
+import Card from '../Card/Card';
+import './Dashboard.css'
+import CardContainer from '../CardContainer/CardContainer';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const fetchData = async (age, gender, startDate, endDate) => {
     const hostname = (process.env["NODE_ENV"] === 'development') ? 'http://localhost:8000' : `${window.location.protocol}//${window.location.hostname}`;
@@ -22,7 +28,7 @@ const fetchData = async (age, gender, startDate, endDate) => {
     }
 };
 
-const Dashboard = () => {
+const Dashboard = ({user}) => {
     const {
         data, setData,
         selectedFeature, setSelectedFeature,
@@ -33,13 +39,15 @@ const Dashboard = () => {
         gender, setGender,
         dateRange, setDateRange,
         error, setError,
-        setLoading, user
+        setLoading
     } = useAppContext();
 
     const convertDate = (str) => {
         const date = new Date(str);
         return [("0" + date.getDate()).slice(-2), ("0" + (date.getMonth() + 1)).slice(-2), date.getFullYear()].join("/");
     };
+
+    console.log(user)
 
     useEffect(() => {
         setTimeout(()=>{
@@ -121,6 +129,7 @@ const Dashboard = () => {
     const handleShareView = () => {
         const shareLink = generateShareableURL();
         navigator.clipboard.writeText(shareLink);
+        toast("Link copied to clipboard!");
     };
 
     const handleLogout = async () => {
@@ -134,7 +143,9 @@ const Dashboard = () => {
         eraseCookies();
         setAge('');
         setGender('');
-        setDateRange({ startDate: new Date(), endDate: new Date(), key: 'selection' });
+        setDateRange({ startDate: new Date('10/01/2022'), 
+            endDate: new Date('10/31/2022'), key: 'selection' });
+        toast("Saved preferences have been cleared!");
     }
 
     if (error) {
@@ -147,40 +158,50 @@ const Dashboard = () => {
     }
 
     return (
-        <div className="dashboard-container">
-            <button onClick={handleShareView}>Share View</button>
-            <button onClick={handleLogout}>Logout</button>
-            <button onClick={clearPreferences}>Clear Preferences</button>
-            <div className="graph-container">
-            <div className="bar-graph">
-                <BarGraph data={data} features={features} setSelectedFeature={setSelectedFeature} />
-            </div>
-            <div className="line-graph">
-                {selectedFeature && <LineChart data={data} feature={selectedFeature} />}
-            </div>
-            </div>
-            <div className='filters-container'>
-                <DateRangePicker ranges={[dateRange]} onChange={handleChange} />
-                <label>
+        <div>
+            <Navbar>
+                <button className="navbar-button" onClick={handleShareView}>Share View</button>
+                <button className="navbar-button" onClick={handleLogout}>Logout</button>
+                <button className="navbar-button" onClick={clearPreferences}>Clear Preferences</button>
+                <ToastContainer />
+            </Navbar>
+            <CardContainer>
+            <Card title={"Date Range Filter"}>
+            <DateRangePicker ranges={[dateRange]} onChange={handleChange} />
+            </Card>
+            <Card title={"Filters"}>
+            <div className='filter-container'>
+            <label style={{ display: 'block', marginBottom: '20px'}}>
                     Age
-                    <select value={age} onChange={(e) => setAge(e.target.value)}>
+                    <br></br>
+                    <select className={`custom-select ${age ? 'selected' : ''}`} value={age} onChange={(e) => setAge(e.target.value)}>
                         <option value="">All values</option>
                         {uniqueAges.map((ageValue) => (
                             <option key={ageValue} value={ageValue}>{ageValue}</option>
                         ))}
                     </select>
-                </label>
-                <label>
-                    Gender
-                    <select value={gender} onChange={(e) => setGender(e.target.value)}>
-                        <option value="">All</option>
-                        {uniqueGenders.map((genderValue) => (
-                            <option key={genderValue} value={genderValue}>{genderValue}</option>
-                        ))}
-                    </select>
-                </label>
+            </label>
+            <label style={{ display: 'block', marginBottom: '20px'}}>
+                Gender
+                <br></br>
+                <select className={`custom-select ${age ? 'selected' : ''}`} value={gender} onChange={(e) => setGender(e.target.value)}>
+                    <option value="">All</option>
+                    {uniqueGenders.map((genderValue) => (
+                        <option key={genderValue} value={genderValue}>{genderValue}</option>
+                    ))}
+                </select>
+            </label>
             </div>
-        </div>
+            </Card>
+            <Card title={"Bar Graph"}>
+                <BarGraph data={data} features={features} setSelectedFeature={setSelectedFeature} />
+            </Card>
+            {selectedFeature &&
+            (<Card title={"Line Graph"} width={"100%"}>
+                <LineChart data={data} feature={selectedFeature} />
+            </Card>)}
+            </CardContainer>
+            </div>
     );
 };
 

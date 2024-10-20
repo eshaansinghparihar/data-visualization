@@ -1,0 +1,30 @@
+.card {
+    background-color: white; 
+    border-radius: 8px; 
+    box-shadow: 
+        0 4px 8px rgba(0, 0, 0, 0.2), 
+        0 4px 12px rgba(75, 192, 192, 1); 
+    padding: 20px; 
+    margin: 20px; 
+    transition: transform 0.3s ease; 
+}
+
+.card:hover {
+    transform: translateY(-2px); 
+}
+
+.card-title {
+    margin: 0 0 10px; 
+    font-size: 1.5em; 
+}
+
+.card-content {
+    font-size: 1em; 
+    color: #333; 
+}
+
+@media (max-width: 768px) {
+    .card {
+        width: 100%;
+    }
+}

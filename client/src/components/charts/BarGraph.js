@@ -23,9 +23,10 @@ const BarGraph = ({ data, features, setSelectedFeature }) => {
         datasets: [
             {
                 data: features.map(feature => featureSums[feature]),
-                backgroundColor: 'blue',
-                hoverBackgroundColor: 'red',
-                borderWidth: 1,
+                backgroundColor: 'black',
+                hoverBackgroundColor: 'rgba(75, 192, 192, 0.5)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 2,
             },
         ],
     };
