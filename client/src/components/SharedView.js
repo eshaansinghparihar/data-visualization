@@ -6,6 +6,9 @@ import LineChart from './charts/LineChart';
 import { extractFeatures } from './utils/extractFeatures';
 import { useAppContext } from './context/AppContext';
 import { logout } from '../auth/authService';
+import Navbar from './Navbar/Navbar';
+import CardContainer from './CardContainer/CardContainer';
+import Card from './Card/Card';
 
 const SharedView = () => {
     const {
@@ -64,16 +67,19 @@ const SharedView = () => {
 
     return (
         <div className="dashboard-container">
-            <button onClick={handleLogout}>Logout</button>
-            <button onClick={navigate}>Go To Dashboard</button>
-            <div className="graph-container">
-            <div className="bar-graph">
-            <BarGraph data={data} features={features} />
-            </div>
-            <div className="line-graph">
-            {selectedFeature ? <LineChart data={data} feature={selectedFeature} /> : <></>}
-            </div>
-            </div>
+            <Navbar>
+            <button className="navbar-button" onClick={handleLogout}>Logout</button>
+            <button className="navbar-button" onClick={navigate}>Go To Dashboard</button>
+            </Navbar>
+            <CardContainer>
+            <Card title={"Bar Graph"}>
+                <BarGraph data={data} features={features}/>
+            </Card>
+            {selectedFeature &&
+            (<Card title={"Line Graph"} width={"100%"}>
+                <LineChart data={data} feature={selectedFeature} />
+            </Card>)}
+            </CardContainer>
         </div>
     );
 };
